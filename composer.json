@@ -1,0 +1,6 @@
+{
+    "require": {
+        "kreait/firebase-php": "^5.21",
+        "ramsey/uuid": "^4.2"
+    }
+}
