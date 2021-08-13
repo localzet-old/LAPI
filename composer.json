@@ -1,6 +1,7 @@
 {
     "require": {
         "kreait/firebase-php": "^5.21",
-        "ramsey/uuid": "^4.2"
+        "ramsey/uuid": "^4.2",
+        "thingengineer/mysqli-database-class": "dev-master"
     }
 }

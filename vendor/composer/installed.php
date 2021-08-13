@@ -322,5 +322,16 @@
             'reference' => 'e66119f3de95efc359483f810c4c3e6436279436',
             'dev_requirement' => false,
         ),
+        'thingengineer/mysqli-database-class' => array(
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../thingengineer/mysqli-database-class',
+            'aliases' => array(
+                0 => '9999999-dev',
+            ),
+            'reference' => '16564ba0717fad64617a1ce4a8d3f9b90e68c7c2',
+            'dev_requirement' => false,
+        ),
     ),
 );
