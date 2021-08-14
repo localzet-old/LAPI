@@ -5,16 +5,19 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+use Kreait\Firebase\Exception\DatabaseException;
+
 class SQL extends API
 {
 
     /** Создание пользователя
-     * 
+     *
      *  var data = {
      *      ...: "Данные пользователя"
      *  };
-     * 
+     *
      * https://api.localzet.ru/?LDB.CREATE={...:"Данные пользователя"}
+     * @throws Exception
      */
     function CREATE($data)
     {
@@ -48,12 +51,13 @@ class SQL extends API
     }
 
     /** Получение информации о пользователе
-     * 
+     *
      *  var data = {
      *      token: "Токен"
      *  };
-     * 
+     *
      * https://api.localzet.ru/?LDB.GET
+     * @throws Exception
      */
     function GET($data)
     {
@@ -94,13 +98,14 @@ class SQL extends API
     }
 
     /** Редактирование пользователя
-     * 
+     *
      *  var data = {
      *      token: "Токен",
      *      ...: "Новые данные"
      *  };
-     * 
+     *
      * https://api.localzet.ru/?LDB.EDIT
+     * @throws Exception
      */
     function EDIT($data)
     {
@@ -126,13 +131,14 @@ class SQL extends API
     }
 
     /** Вход в систему
-     * 
+     *
      *  var data = {
      *      login: "Логин",
      *      password: "Пароль"
      *  };
-     * 
+     *
      * https://api.localzet.ru/?LDB.SIGNIN
+     * @throws Exception
      */
     function SIGNIN($data)
     {
@@ -181,13 +187,14 @@ class SQL extends API
     }
 
     /** Смена / Сброс пароля
-     * 
+     *
      *  var data = {
      *      password: "Новый пароль",
      *      token: "Токен",
      *  };
-     * 
+     *
      * https://api.localzet.ru/?LDB.PASS
+     * @throws Exception
      */
     function PASS($data)
     {
@@ -214,14 +221,15 @@ class SQL extends API
     }
 
     /** Восстановление пароля
-     *  
+     *
      *  var data = {
      *      email: "Электронная почта"
      *  };
-     * 
+     *
      * https://api.localzet.ru/?LDB.FORGOT
+     * @throws Exception
      */
-    function FORGOT($data)
+    function FORGOT($data): bool
     {
         // Class => Array
         $data = json_decode(json_encode($data), true);
@@ -234,23 +242,25 @@ class SQL extends API
                     return true;
                 }
             }
-            http_response_code(401);
-            API::COUNTS();
-            return false;
-        } else {
-            http_response_code(401);
-            API::COUNTS();
-            return false;
         }
+        http_response_code(401);
+        API::COUNTS();
+        return false;
     }
 
 
+    /**
+     * @throws DatabaseException
+     */
     function COUNTUSERS()
     {
         API::COUNTS();
         return API::DB()->getReference('counts/users')->getValue();
     }
 
+    /**
+     * @throws DatabaseException
+     */
     function COUNTREQUESTS()
     {
         API::COUNTS();

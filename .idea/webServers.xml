@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="f76e3d1a-4fa8-4d82-9951-828332ed2550" name="80.78.244.56" url="https://api.localzet.ru">
+        <fileTransfer rootFolder="/var/www/fastuser/data/www/api.localzet.ru" accessType="SFTP" host="80.78.244.56" port="22" sshConfigId="963adc7e-30b0-46a2-95ab-8bdef2178902" sshConfig="root@80.78.244.56:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
