@@ -5,7 +5,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use \Firebase\JWT\JWT;
+use Firebase\JWT\JWT;
 
 class TOKEN
 {
@@ -22,9 +22,16 @@ class TOKEN
                 "aud" => $service,
                 "iat" => floor(time()),
                 "exp" => $exp,
-                "data" => $data
+                "data" => array(
+                    "username" => $data['username'],
+                    "first_name" => $data['first_name'],
+                    "last_name" => $data['last_name'],
+                    "email" => $data['email'],
+                    "id" => $data['id']
+                )
             );
-            return JWT::encode($token, $KEY);
+            // Class => Array
+            return json_decode(json_encode(JWT::encode($token, $KEY)), true);
         } catch (Exception $e) {
             return $e;
         }
@@ -36,7 +43,7 @@ class TOKEN
         try {
             $data = JWT::decode($token, $KEY, array('HS256'));
             if ($data->iss == "Zorin Projects") {
-                return $data->data;
+                return json_decode(json_encode($data->data), true);
             }
         } catch (Exception $e) {
             return $e;
