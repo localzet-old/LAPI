@@ -41,8 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
         http_response_code(401);
         echo "Неверный запрос";
     }
-} else if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    echo "Метод GET не поддерживается по соображениям безопасности";
 } else {
-    http_response_code(401);
+    http_response_code(405);
+    echo "Метод GET не поддерживается";
 }

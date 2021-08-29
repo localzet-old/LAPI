@@ -10,9 +10,19 @@ require_once('APIConstants.php');
 class APIEngine
 {
 
+    /**
+     * @var false|string[]
+     */
     private $Function;
-    private $Params;
+    /**
+     * @var string
+     */
+    private string $Params;
 
+    /**
+     * @param $API
+     * @return mixed
+     */
     static function getApiEngineByName($API)
     {
         require_once 'API.php';
@@ -21,12 +31,21 @@ class APIEngine
         return $APIClass;
     }
 
+    /**
+     * APIEngine constructor.
+     * @param $Function
+     * @param $Params
+     */
     function __construct($Function, $Params)
     {
         $this->Params = stripcslashes($Params);
         $this->Function = explode('_', $Function);
     }
 
+    /**
+     * @return false|string
+     * @throws \ReflectionException
+     */
     function RUN()
     {
         $RESULT = json_decode('{}');

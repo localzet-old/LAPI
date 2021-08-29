@@ -8,28 +8,28 @@
 class APIConstants {
 
     //Результат запроса - параметр в JSON ответе
-    public static $RESULT_CODE="resultCode";
+    public static string $RESULT_CODE="resultCode";
     
     //Ответ - используется как параметр в главном JSON ответе в apiEngine
-    public static $RESPONSE="response";
+    public static string $RESPONSE="response";
     
     //Нет ошибок
-    public static $ERROR_NO_ERRORS = 0;
+    public static int $ERROR_NO_ERRORS = 0;
     
     //Ошибка в переданных параметрах
-    public static $ERROR_PARAMS = 1;
+    public static int $ERROR_PARAMS = 1;
     
     //Ошибка в подготовке SQL запроса к базе
-    public static $ERROR_STMP = 2;
+    public static int $ERROR_STMP = 2;
 
     //Ошибка запись не найдена
-    public static $ERROR_RECORD_NOT_FOUND = 3;
+    public static int $ERROR_RECORD_NOT_FOUND = 3;
     
     //Ошибка в параметрах запроса к серверу. Не путать с ошибкой переданных параметров в метод
-    public static $ERROR_ENGINE_PARAMS = 100;
+    public static int $ERROR_ENGINE_PARAMS = 100;
     
     //Ошибка zip архива
-    public static $ERROR_ENSO_ZIP_ARCHIVE = 1001;
+    public static int $ERROR_ENSO_ZIP_ARCHIVE = 1001;
     
 }
 ?>

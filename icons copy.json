@@ -1,0 +1,110 @@
+{
+    "compact": [
+        {
+            "id": "apps.help-center.home",
+            "title": "Главная",
+            "type": "basic",
+            "link": "/",
+            "exactMatch": true
+        },
+        {
+            "id": "apps.help-center.faqs",
+            "title": "FAQ",
+            "type": "basic",
+            "link": "/help/faqs"
+        },
+        {
+            "id": "apps.help-center.guides",
+            "title": "Инструкции",
+            "type": "basic",
+            "link": "/help/guides"
+        },
+        {
+            "id": "apps.help-center.support",
+            "title": "Поддержка",
+            "type": "basic",
+            "link": "/help/support"
+        }
+    ],
+    "default": [
+        {
+            "id": "apps.help-center.home",
+            "title": "Главная",
+            "type": "basic",
+            "link": "/",
+            "exactMatch": true
+        },
+        {
+            "id": "apps.help-center.faqs",
+            "title": "FAQ",
+            "type": "basic",
+            "link": "/help/faqs"
+        },
+        {
+            "id": "apps.help-center.guides",
+            "title": "Инструкции",
+            "type": "basic",
+            "link": "/help/guides"
+        },
+        {
+            "id": "apps.help-center.support",
+            "title": "Поддержка",
+            "type": "basic",
+            "link": "/help/support"
+        }
+    ],
+    "futuristic": [
+        {
+            "id": "apps.help-center.home",
+            "title": "Главная",
+            "type": "basic",
+            "link": "/",
+            "exactMatch": true
+        },
+        {
+            "id": "apps.help-center.faqs",
+            "title": "FAQ",
+            "type": "basic",
+            "link": "/help/faqs"
+        },
+        {
+            "id": "apps.help-center.guides",
+            "title": "Инструкции",
+            "type": "basic",
+            "link": "/help/guides"
+        },
+        {
+            "id": "apps.help-center.support",
+            "title": "Поддержка",
+            "type": "basic",
+            "link": "/help/support"
+        }
+    ],
+    "horizontal": [
+        {
+            "id": "apps.help-center.home",
+            "title": "Главная",
+            "type": "basic",
+            "link": "/",
+            "exactMatch": true
+        },
+        {
+            "id": "apps.help-center.faqs",
+            "title": "FAQ",
+            "type": "basic",
+            "link": "/help/faqs"
+        },
+        {
+            "id": "apps.help-center.guides",
+            "title": "Инструкции",
+            "type": "basic",
+            "link": "/help/guides"
+        },
+        {
+            "id": "apps.help-center.support",
+            "title": "Поддержка",
+            "type": "basic",
+            "link": "/help/support"
+        }
+    ]
+}

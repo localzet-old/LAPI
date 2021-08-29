@@ -1,0 +1,178 @@
+{
+    "compact": [
+        {
+            "id": "user-interface.icons.heroicons-outline",
+            "title": "Heroicons (O)",
+            "type": "basic",
+            "icon": "heroicons_outline:beaker",
+            "link": "/icons/heroicons-outline"
+        },
+        {
+            "id": "user-interface.icons.heroicons-solid",
+            "title": "Heroicons (S)",
+            "type": "basic",
+            "icon": "heroicons_solid:beaker",
+            "link": "/icons/heroicons-solid"
+        },
+        {
+            "id": "user-interface.icons.material-twotone",
+            "title": "Material",
+            "type": "basic",
+            "icon": "image",
+            "link": "/icons/material-twotone"
+        },
+        {
+            "id": "user-interface.icons.material-outline",
+            "title": "Material (O)",
+            "type": "basic",
+            "icon": "mat_outline:image",
+            "link": "/icons/material-outline"
+        },
+        {
+            "id": "user-interface.icons.material-solid",
+            "title": "Material (S)",
+            "type": "basic",
+            "icon": "mat_solid:image",
+            "link": "/icons/material-solid"
+        },
+        {
+            "id": "user-interface.icons.feather",
+            "title": "Feather",
+            "type": "basic",
+            "icon": "feather:image",
+            "link": "/icons/feather"
+        }
+    ],
+    "default": [
+        {
+            "id": "user-interface.icons.heroicons-outline",
+            "title": "Heroicons (O)",
+            "type": "basic",
+            "icon": "heroicons_outline:beaker",
+            "link": "/icons/heroicons-outline"
+        },
+        {
+            "id": "user-interface.icons.heroicons-solid",
+            "title": "Heroicons (S)",
+            "type": "basic",
+            "icon": "heroicons_solid:beaker",
+            "link": "/icons/heroicons-solid"
+        },
+        {
+            "id": "user-interface.icons.material-twotone",
+            "title": "Material",
+            "type": "basic",
+            "icon": "image",
+            "link": "/icons/material-twotone"
+        },
+        {
+            "id": "user-interface.icons.material-outline",
+            "title": "Material (O)",
+            "type": "basic",
+            "icon": "mat_outline:image",
+            "link": "/icons/material-outline"
+        },
+        {
+            "id": "user-interface.icons.material-solid",
+            "title": "Material (S)",
+            "type": "basic",
+            "icon": "mat_solid:image",
+            "link": "/icons/material-solid"
+        },
+        {
+            "id": "user-interface.icons.feather",
+            "title": "Feather",
+            "type": "basic",
+            "icon": "feather:image",
+            "link": "/icons/feather"
+        }
+    ],
+    "futuristic": [
+        {
+            "id": "user-interface.icons.heroicons-outline",
+            "title": "Heroicons (O)",
+            "type": "basic",
+            "icon": "heroicons_outline:beaker",
+            "link": "/icons/heroicons-outline"
+        },
+        {
+            "id": "user-interface.icons.heroicons-solid",
+            "title": "Heroicons (S)",
+            "type": "basic",
+            "icon": "heroicons_solid:beaker",
+            "link": "/icons/heroicons-solid"
+        },
+        {
+            "id": "user-interface.icons.material-twotone",
+            "title": "Material",
+            "type": "basic",
+            "icon": "image",
+            "link": "/icons/material-twotone"
+        },
+        {
+            "id": "user-interface.icons.material-outline",
+            "title": "Material (O)",
+            "type": "basic",
+            "icon": "mat_outline:image",
+            "link": "/icons/material-outline"
+        },
+        {
+            "id": "user-interface.icons.material-solid",
+            "title": "Material (S)",
+            "type": "basic",
+            "icon": "mat_solid:image",
+            "link": "/icons/material-solid"
+        },
+        {
+            "id": "user-interface.icons.feather",
+            "title": "Feather",
+            "type": "basic",
+            "icon": "feather:image",
+            "link": "/icons/feather"
+        }
+    ],
+    "horizontal": [
+        {
+            "id": "user-interface.icons.heroicons-outline",
+            "title": "Heroicons (O)",
+            "type": "basic",
+            "icon": "heroicons_outline:beaker",
+            "link": "/icons/heroicons-outline"
+        },
+        {
+            "id": "user-interface.icons.heroicons-solid",
+            "title": "Heroicons (S)",
+            "type": "basic",
+            "icon": "heroicons_solid:beaker",
+            "link": "/icons/heroicons-solid"
+        },
+        {
+            "id": "user-interface.icons.material-twotone",
+            "title": "Material",
+            "type": "basic",
+            "icon": "image",
+            "link": "/icons/material-twotone"
+        },
+        {
+            "id": "user-interface.icons.material-outline",
+            "title": "Material (O)",
+            "type": "basic",
+            "icon": "mat_outline:image",
+            "link": "/icons/material-outline"
+        },
+        {
+            "id": "user-interface.icons.material-solid",
+            "title": "Material (S)",
+            "type": "basic",
+            "icon": "mat_solid:image",
+            "link": "/icons/material-solid"
+        },
+        {
+            "id": "user-interface.icons.feather",
+            "title": "Feather",
+            "type": "basic",
+            "icon": "feather:image",
+            "link": "/icons/feather"
+        }
+    ]
+}

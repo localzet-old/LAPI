@@ -5,218 +5,272 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+use Kreait\Firebase\Exception\DatabaseException;
+
 class LDB extends API
 {
 
     /** Создание пользователя
-     * 
-     *  var data = {
+     *
+     *  var post = {
      *      ...: "Данные пользователя"
      *  };
-     * 
-     * https://api.localzet.ru/?LDB.CREATE={...:"Данные пользователя"}
+     *
+     * @param $data
+     * @return bool|string
+     * @throws Exception
      */
     function CREATE($data)
     {
-        foreach (API::DB()->getReference('users')->getValue() as $user) {
-            if ($data->username == $user['username'] || $data->email == $user['email']) {
+        // Class => Array
+        $data = json_decode(json_encode($data), true);
+        $db = $data['service'];
+        unset($data['service']);
+
+        // Поиск существующих "username" и "email"
+        foreach (API::MySQL($db)->get('users') as $user) {
+            if ($data['username'] == $user['username'] || $data['email'] == $user['email']) {
                 http_response_code(401);
-                API::COUNTS();
                 return "Пользователь уже существует";
-                // $data->id = $user['id'];
-                // $data->token = $user['token'];
-                // $data->password = md5($data->password);
-                // $this->EDIT($data);
             }
         }
-        $data->id = array_key_last(API::DB()->getReference('users')->getValue()) + 1;
-        $data->password = md5($data->password);
-        API::DB()->getReference('users/' . $data->id)->set($data);
-        unset($data->token);
-        unset($data->password);
-        API::DB()->getReference('users/' . $data->id . '/token')->set(API::TOKEN()->CREATE($data));
-        if (API::DB()->getReference('users/' . $data->id)->getValue()['username'] == $data->username) {
-            API::COUNTS();
+
+        // Отправка данных
+        $data['password'] = md5($data['password']);
+        $data['id'] = API::MySQL($db)->insert('users', $data);
+
+        // Генерация токена и обновление данных
+        $data['token'] = API::TOKEN()->CREATE($data);
+        API::MySQL($db)->where('id', $data['id']);
+        if (API::MySQL($db)->update('users', $data)) {
             return true;
+        } else {
+            http_response_code(401);
+            return API::MySQL($db)->getLastError();
         }
-        http_response_code(401);
-        API::COUNTS();
-        return false;
     }
 
     /** Получение информации о пользователе
-     * 
-     *  var data = {
+     *
+     *  var post = {
      *      token: "Токен"
      *  };
-     * 
-     * https://api.localzet.ru/?LDB.GET
+     *
+     * @param $data
+     * @return string|array|MysqliDb
+     * @throws Exception
      */
     function GET($data)
     {
-        $user = API::TOKEN()->DECODE($data->token);
+        // Class => Array
+        $data = json_decode(json_encode($data), true);
+        $db = $data['service'];
+        unset($data['service']);
+
+        $user = API::TOKEN()->DECODE($data['token']);
         if ($user) {
-            $users = API::DB()->getReference('users')->getValue();
+            $users = API::MySQL($db)->get('users');
             if ($users) {
                 foreach ($users as $userbd) {
-                    if ($userbd['id'] == $user->id) {
-                        unset($userbd['token']);
-                        unset($userbd['password']);
+                    if ($userbd['id'] == $user['id']) {
                         $userbd['token'] = API::TOKEN()->CREATE($userbd);
-                        API::DB()->getReference('users/' . $userbd['id'])->update(['token' => $userbd['token']]);
-                        API::COUNTS();
-                        return $userbd;
+                        API::MySQL($db)->where('id', $userbd['id']);
+                        if (API::MySQL($db)->update('users', $userbd)) {
+                            unset($userbd['password']);
+                            unset($userbd['code']);
+                            return $userbd;
+                        } else {
+                            http_response_code(401);
+                            return API::MySQL($db)->getLastError();
+                        }
                     }
                 }
-                // http_response_code(401);
-                API::COUNTS();
-                return "Не найдено совпадений в БД по id из токена: " . $user->id;
+                http_response_code(401);
+                return "Не найдено совпадений в БД по id из токена";
             } else {
-                // http_response_code(401);
-                API::COUNTS();
-                return "Ошибка ДБ";
+                http_response_code(401);
+                return API::MySQL($db)->getLastError();
             }
         } else {
-            // http_response_code(401);
-            API::COUNTS();
+            http_response_code(401);
             return "Ошибка декодирования токена";
         }
     }
 
     /** Редактирование пользователя
-     * 
-     *  var data = {
+     *
+     *  var post = {
      *      token: "Токен",
      *      ...: "Новые данные"
      *  };
-     * 
-     * https://api.localzet.ru/?LDB.EDIT
+     *
+     * @param $data
+     * @return bool|string|array|MysqliDb
+     * @throws Exception
      */
     function EDIT($data)
     {
-        $user = $this->GET($data);
-        if ($user && $user['id'] == $data->id) {
-            API::DB()->getReference('users')->update([$user['id'] => $data]);
-            API::COUNTS();
-            return API::DB()->getReference('users/' . $user['id'])->getValue();
+        // Class => Array
+        $data = json_decode(json_encode($data), true);
+        $db = $data['service'];
+        unset($data['service']);
+
+        $user = $this->GET($data['user']);
+        if ($user && $user['id'] == $data['id']) {
+            API::MySQL($db)->where('id', $user['id']);
+            if (API::MySQL($db)->update('users', $data)) {
+                $userbd = API::MySQL($db)->get('users')[$user['id']];
+                unset($userbd['password']);
+                unset($userbd['code']);
+                return $userbd;
+            } else {
+                http_response_code(401);
+                return API::MySQL($db)->getLastError();
+            }
         } else {
             http_response_code(401);
-            API::COUNTS();
             return false;
         }
     }
 
     /** Вход в систему
-     * 
-     *  var data = {
+     *
+     *  var post = {
      *      login: "Логин",
      *      password: "Пароль"
      *  };
-     * 
-     * https://api.localzet.ru/?LDB.SIGNIN
+     *
+     * @param $data
+     * @return string|array|MysqliDb
+     * @throws Exception
      */
     function SIGNIN($data)
     {
+        // Class => Array
+        $data = json_decode(json_encode($data), true);
+        $db = $data['service'];
+        unset($data['service']);
+
         if (
-            trim($data->login) == '' ||
-            trim($data->password) == ''
+            trim($data['login']) == '' ||
+            trim($data['password']) == ''
         ) {
             http_response_code(401);
-            API::COUNTS();
-            return "Нет логина или пароля";
+            return "Нет логина и/или пароля";
         }
 
-        $users = API::DB()->getReference('users')->getValue();
+        $users = API::MySQL($db)->get('users');
         if ($users && $data) {
             foreach ($users as $user) {
-                if ($user['email'] == $data->login || $user['username'] == $data->login) {
-                    if (md5($data->password) == $user['password']) {
-                        unset($user['password']);
-                        unset($user['token']);
+                if ($user['email'] == $data['login'] || $user['username'] == $data['login']) {
+                    if (md5($data['password']) == $user['password']) {
                         $user['token'] = API::TOKEN()->CREATE($user);
-                        API::DB()->getReference('users/' . $user['id'] . '/token')->set($user['token']);
-                        API::COUNTS();
-                        return $user;
+                        API::MySQL($db)->where('id', $user['id']);
+                        if (API::MySQL($db)->update('users', $user)) {
+                            unset($user['password']);
+                            unset($user['code']);
+                            return $user;
+                        } else {
+                            http_response_code(401);
+                            return API::MySQL($db)->getLastError();
+                        }
                     } else {
                         http_response_code(401);
-                        API::COUNTS();
                         return "Неверный пароль";
                     }
                 }
             }
             http_response_code(404);
-            API::COUNTS();
             return "Ползователь не найден";
         } else {
             http_response_code(401);
-            API::COUNTS();
             return "Ошибка БД";
         }
     }
 
     /** Смена / Сброс пароля
-     * 
-     *  var data = {
+     *
+     *  var post = {
      *      password: "Новый пароль",
      *      token: "Токен",
      *  };
-     * 
-     * https://api.localzet.ru/?LDB.PASS
+     *
+     * @param $data
+     * @return bool|string
+     * @throws Exception
      */
     function PASS($data)
     {
-        $password = $data->password;
-        $user = $this->GET($data)->user;
-        if ($data && $user && $password) {
-            API::DB()->getReference('users/' . $user->id)->update(['password' => $password]);
-            API::COUNTS();
-            return true;
+        // Class => Array
+        $data = json_decode(json_encode($data), true);
+        $db = $data['service'];
+        unset($data['service']);
+
+        $user = $this->GET($data);
+        if ($data && $user && $data['password']) {
+            $user['password'] = $data['password'];
+            API::MySQL($db)->where('id', $user['id']);
+            if (API::MySQL($db)->update('users', $user)) {
+                return true;
+            } else {
+                http_response_code(401);
+                return API::MySQL($db)->getLastError();
+            }
         } else {
             http_response_code(401);
-            API::COUNTS();
             return false;
         }
     }
 
     /** Восстановление пароля
-     *  
-     *  var data = {
+     *
+     *  var post = {
      *      email: "Электронная почта"
      *  };
-     * 
-     * https://api.localzet.ru/?LDB.FORGOT
+     *
+     * @param $data
+     * @return bool
+     * @throws Exception
      */
-    function FORGOT($data)
+    function FORGOT($data): bool
     {
-        $email = $data->email;
-        $users = API::DB()->getReference('users')->getValue();
-        if ($users) {
-            foreach ($users as $user) {
-                if ($email == $user['email']) {
-                    API::COUNTS();
-                    return true;
-                }
-            }
-            http_response_code(401);
-            API::COUNTS();
-            return false;
+        // Class => Array
+        $data = json_decode(json_encode($data), true);
+        $db = $data['service'];
+        unset($data['service']);
+
+        API::MySQL($db)->where("email", $data['email']);
+        $user = API::MySQL($db)->getOne("users");
+        if ($data['email'] == $user['email']) {
+            return true;
+        }
+
+        http_response_code(401);
+        return false;
+    }
+
+    function NAVIGATION($data)
+    {
+        $data = json_decode(json_encode($data), true);
+        $db = $data['service'];
+        unset($data['service']);
+
+        $page = explode('/', $data['state'])[1];
+        if ($page == "dashboard" || $page == "apps") {
+            $state = "main";
         } else {
-            http_response_code(401);
-            API::COUNTS();
-            return false;
+            $state = $page;
+        }
+        API::MySQL($db)->where("type", $state);
+        $navigation = API::MySQL($db)->getOne("navigation");
+        if ($state == $navigation['type']) {
+
+            return json_decode($navigation['json']);
         }
     }
 
-
-    function COUNTUSERS()
+    function CONFIG()
     {
-        API::COUNTS();
-        return API::DB()->getReference('counts/users')->getValue();
-    }
-
-    function COUNTREQUESTS()
-    {
-        API::COUNTS();
-        return API::DB()->getReference('counts/requests')->getValue();
+        return "Конфигурация";
     }
 }

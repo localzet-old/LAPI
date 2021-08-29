@@ -16,7 +16,10 @@ class API
     public $DB;
     public $TOKEN;
 
-    function DB()
+    /**
+     * @return \Kreait\Firebase\Contract\Database
+     */
+    function DB(): \Kreait\Firebase\Contract\Database
     {
         if (is_null($this->DB) || !isset($this->DB) || !$this->DB) {
             $factory = (new Factory())
@@ -27,14 +30,17 @@ class API
         return $this->DB;
     }
 
-    function MySQL()
+    /**
+     * @return \MysqliDb|null
+     */
+    function MySQL($db): ?MysqliDb
     {
         if (is_null($this->MySQL) || !isset($this->MySQL) || !$this->MySQL) {
             $this->MySQL = new MysqliDb(array(
                 'host' => 'localhost',
                 'username' => 'localzet',
                 'password' => 'lvanZ2003',
-                'db' => 'api',
+                'db' => $db,
                 'port' => 3306,
                 'prefix' => '',
                 'charset' => 'utf8'
@@ -47,7 +53,10 @@ class API
         return $this->MySQL;
     }
 
-    function TOKEN()
+    /**
+     * @return \TOKEN
+     */
+    function TOKEN(): TOKEN
     {
         if (is_null($this->TOKEN) || !isset($this->TOKEN) || !$this->TOKEN) {
             $this->TOKEN = new TOKEN();
@@ -55,18 +64,27 @@ class API
         return $this->TOKEN;
     }
 
+    /**
+     *
+     */
     function COUNTS()
     {
         $this->UPUSER();
         $this->UPREQUEST();
     }
 
+    /**
+     * @throws \Kreait\Firebase\Exception\DatabaseException
+     */
     function UPREQUEST()
     {
         $counts =  $this->DB()->getReference('counts/requests')->getValue() + 1;
         $this->DB()->getReference('counts')->update(['requests' => $counts]);
     }
 
+    /**
+     * @throws \Kreait\Firebase\Exception\DatabaseException
+     */
     function UPUSER()
     {
         $counts = array_key_last($this->DB()->getReference('users')->getValue());
