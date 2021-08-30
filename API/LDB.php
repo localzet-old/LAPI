@@ -271,6 +271,6 @@ class LDB extends API
 
     function CONFIG()
     {
-        return "Конфигурация";
+        return "Конфигурация"; // Здесь должно быть что-то типа получения массива из БД
     }
 }
