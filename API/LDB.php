@@ -38,12 +38,16 @@ class LDB extends API
         // Отправка данных
         $data['password'] = md5($data['password']);
         $data['id'] = API::MySQL($db)->insert('users', $data);
-
-        // Генерация токена и обновление данных
-        $data['token'] = API::TOKEN()->CREATE($data);
-        API::MySQL($db)->where('id', $data['id']);
-        if (API::MySQL($db)->update('users', $data)) {
-            return true;
+        if ($data['id']) {
+            // Генерация токена и обновление данных
+            $data['token'] = API::TOKEN()->CREATE($data);
+            API::MySQL($db)->where('id', $data['id']);
+            if (API::MySQL($db)->update('users', $data)) {
+                return true;
+            } else {
+                http_response_code(401);
+                return API::MySQL($db)->getLastError();
+            }
         } else {
             http_response_code(401);
             return API::MySQL($db)->getLastError();

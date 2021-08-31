@@ -13,6 +13,7 @@ use Kreait\Firebase\Factory;
 class API
 {
     public $MySQL;
+    public $MySQL_DBName;
     public $DB;
     public $TOKEN;
 
@@ -35,8 +36,13 @@ class API
      */
     function MySQL($db): ?MysqliDb
     {
-        if (is_null($this->MySQL) || !isset($this->MySQL) || !$this->MySQL) {
-            $this->MySQL = new MysqliDb(array(
+        if (is_null($db) || !isset($db) || !$db) {
+            printf("Нет параметра service");
+            $this->MySQL[$db] = null;
+            return false;
+        }
+        if (is_null($this->MySQL) || !isset($this->MySQL) || !$this->MySQL || is_null($this->MySQL[$db]) || !isset($this->MySQL[$db]) || !$this->MySQL[$db]) {
+            $this->MySQL[$db] = new MysqliDb(array(
                 'host' => 'localhost',
                 'username' => 'localzet',
                 'password' => 'lvanZ2003',
@@ -47,10 +53,11 @@ class API
             ));
             if (mysqli_connect_errno()) {
                 printf("Подключение невозможно: %s\n", mysqli_connect_error());
-                $this->MySQL = null;
+                $this->MySQL[$db] = null;
+                return false;
             }
         }
-        return $this->MySQL;
+        return $this->MySQL[$db];
     }
 
     /**
