@@ -36,11 +36,15 @@ class LDB extends API
         }
 
         // Отправка данных
+        if (!$data['type']) {
+            $data['type'] = 'student';
+        }
         $data['password'] = md5($data['password']);
         $data['id'] = API::MySQL($db)->insert('users', $data);
         if ($data['id']) {
             // Генерация токена и обновление данных
             $data['token'] = API::TOKEN()->CREATE($data);
+            $data['updated'] = API::MySQL($db)->now();
             API::MySQL($db)->where('id', $data['id']);
             if (API::MySQL($db)->update('users', $data)) {
                 return true;
@@ -73,21 +77,19 @@ class LDB extends API
 
         $user = API::TOKEN()->DECODE($data['token']);
         if ($user) {
-            $users = API::MySQL($db)->get('users');
-            if ($users) {
-                foreach ($users as $userbd) {
-                    if ($userbd['id'] == $user['id']) {
-                        $userbd['token'] = API::TOKEN()->CREATE($userbd);
-                        API::MySQL($db)->where('id', $userbd['id']);
-                        if (API::MySQL($db)->update('users', $userbd)) {
-                            unset($userbd['password']);
-                            unset($userbd['code']);
-                            return $userbd;
-                        } else {
-                            http_response_code(401);
-                            return API::MySQL($db)->getLastError();
-                        }
-                    }
+            API::MySQL($db)->where('id', $user['id']);
+            $userbd = API::MySQL($db)->getOne('users');
+            if ($userbd) {
+                $userbd['token'] = API::TOKEN()->CREATE($userbd);
+                $userbd['updated'] = API::MySQL($db)->now();
+                API::MySQL($db)->where('id', $userbd['id']);
+                if (API::MySQL($db)->update('users', $userbd)) {
+                    unset($userbd['password']);
+                    unset($userbd['code']);
+                    return $userbd;
+                } else {
+                    http_response_code(401);
+                    return API::MySQL($db)->getLastError();
                 }
                 http_response_code(401);
                 return "Не найдено совпадений в БД по id из токена";
@@ -121,6 +123,7 @@ class LDB extends API
 
         $user = $this->GET($data['user']);
         if ($user && $user['id'] == $data['id']) {
+            $user['updated'] = API::MySQL($db)->now();
             API::MySQL($db)->where('id', $user['id']);
             if (API::MySQL($db)->update('users', $data)) {
                 $userbd = API::MySQL($db)->get('users')[$user['id']];
@@ -169,6 +172,7 @@ class LDB extends API
                 if ($user['email'] == $data['login'] || $user['username'] == $data['login']) {
                     if (md5($data['password']) == $user['password']) {
                         $user['token'] = API::TOKEN()->CREATE($user);
+                        $user['updated'] = API::MySQL($db)->now();
                         API::MySQL($db)->where('id', $user['id']);
                         if (API::MySQL($db)->update('users', $user)) {
                             unset($user['password']);
@@ -213,6 +217,8 @@ class LDB extends API
         $user = $this->GET($data);
         if ($data && $user && $data['password']) {
             $user['password'] = $data['password'];
+            // $user['updated_pass'] = API::MySQL($db)->now();
+            // Создай поле для подписи "Последнее обновление пароля"
             API::MySQL($db)->where('id', $user['id']);
             if (API::MySQL($db)->update('users', $user)) {
                 return true;
@@ -265,12 +271,18 @@ class LDB extends API
         } else {
             $state = $page;
         }
+        API::MySQL($db)->where("level", $data['level']);
         API::MySQL($db)->where("type", $state);
         $navigation = API::MySQL($db)->getOne("navigation");
+        if (!$navigation) {
+            API::MySQL($db)->where("level", "all");
+            API::MySQL($db)->where("type", $state);
+            $navigation = API::MySQL($db)->getOne("navigation");
+        }
         if ($state == $navigation['type']) {
-
             return json_decode($navigation['json']);
         }
+        return false;
     }
 
     function CONFIG()
