@@ -32,7 +32,7 @@ class API
     }
 
     /**
-     * @return \MysqliDb|null
+     * @return \MysqliDb|null|false
      */
     function MySQL($db): ?MysqliDb
     {

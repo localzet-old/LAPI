@@ -40,11 +40,14 @@ class LDB extends API
             $data['type'] = 'student';
         }
         $data['password'] = md5($data['password']);
+        if ($db == 'receipt') {
+            $data['points'] = 0;
+        }
         $data['id'] = API::MySQL($db)->insert('users', $data);
         if ($data['id']) {
             // Генерация токена и обновление данных
             $data['token'] = API::TOKEN()->CREATE($data);
-            $data['updated'] = API::MySQL($db)->now();
+            $data['updated'] = floor(time());
             API::MySQL($db)->where('id', $data['id']);
             if (API::MySQL($db)->update('users', $data)) {
                 return true;
@@ -120,23 +123,19 @@ class LDB extends API
         $data = json_decode(json_encode($data), true);
         $db = $data['service'];
         unset($data['service']);
-
-        $user = $this->GET($data['user']);
-        if ($user && $user['id'] == $data['id']) {
-            $user['updated'] = API::MySQL($db)->now();
-            API::MySQL($db)->where('id', $user['id']);
-            if (API::MySQL($db)->update('users', $data)) {
-                $userbd = API::MySQL($db)->get('users')[$user['id']];
-                unset($userbd['password']);
-                unset($userbd['code']);
-                return $userbd;
-            } else {
-                http_response_code(401);
-                return API::MySQL($db)->getLastError();
-            }
+        $result = [
+            'first_name' => $data['user']['first_name'],
+            'last_name' => $data['user']['last_name'],
+            'username' => $data['user']['username'],
+            'type' => $data['user']['type'],
+            'email' => $data['user']['email']
+        ];
+        API::MySQL($db)->where('id', $data['user']['id']);
+        if (API::MySQL($db)->update('users', $result)) {
+            return true;
         } else {
             http_response_code(401);
-            return false;
+            return API::MySQL($db)->getLastError();
         }
     }
 
@@ -211,10 +210,10 @@ class LDB extends API
     {
         // Class => Array
         $data = json_decode(json_encode($data), true);
+        $user = $this->GET($data);
         $db = $data['service'];
         unset($data['service']);
 
-        $user = $this->GET($data);
         if ($data && $user && $data['password']) {
             $user['password'] = $data['password'];
             // $user['updated_pass'] = API::MySQL($db)->now();

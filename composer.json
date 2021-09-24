@@ -3,6 +3,8 @@
         "kreait/firebase-php": "^5.21",
         "ramsey/uuid": "^4.2",
         "thingengineer/mysqli-database-class": "dev-master",
-        "ext-json": "*"
+        "ext-json": "*",
+        "textalk/websocket": "^1.5",
+        "workerman/workerman": "^4.0"
     }
 }
