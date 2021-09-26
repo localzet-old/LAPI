@@ -42,7 +42,7 @@ class API
             return false;
         }
         if (is_null($this->MySQL) || !isset($this->MySQL) || !$this->MySQL || is_null($this->MySQL[$db]) || !isset($this->MySQL[$db]) || !$this->MySQL[$db]) {
-            $this->MySQL[$db] = new MysqliDb(array(
+            $connection = array(
                 'host' => 'localhost',
                 'username' => 'localzet',
                 'password' => 'lvanZ2003',
@@ -50,7 +50,13 @@ class API
                 'port' => 3306,
                 'prefix' => '',
                 'charset' => 'utf8'
-            ));
+            );
+            if ($db == 'school') {
+                $connection['username'] = 'moush1';
+                $connection['password'] = 'svx.ekaterinburg';
+                $connection['db'] = 'school_prod';
+            }
+            $this->MySQL[$db] = new MysqliDb($connection);
             if (mysqli_connect_errno()) {
                 printf("Подключение невозможно: %s\n", mysqli_connect_error());
                 $this->MySQL[$db] = null;

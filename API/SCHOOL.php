@@ -57,26 +57,22 @@ class SCHOOL extends API
         $userAdmin = API::MySQL('school')->getOne('users');
         if ($userAdmin['type'] == 'dev' || $userAdmin['type'] == 'service' || $userAdmin['type'] == 'admin'  || $userAdmin['type'] == 'teacher') {
 
-            // Получаем предмет(ы), который ведёт учитель
-            API::MySQL('school')->where('teacher', $data['teacher']);
+            // Предметы
+            API::MySQL('school')->where('teacher', $data['user']);
             $subjects = API::MySQL('school')->get('subjects');
             $subnames = [];
             foreach ($subjects as $subject) {
                 if (!in_array($subject['name'], $subnames)) {
                     $subnames[] = $subject['name'];
                 }
-                $subnames[$subject['name']][] = $subject;
+                $result['subjects'][] = $subject;
             }
-            $result['subjects'] = $subnames;
+            $result['subnames'] = $subnames;
 
             // Классы
             $classes = API::MySQL('school')->get('classes');
             foreach ($classes as $class) {
-                API::MySQL('school')->where('id', $class['teacher']);
-                $teacher = API::MySQL('school')->getOne('users');
-                $class['teacher_name'] = $teacher['first_name'] . " " . $teacher['last_name'];
-                $result['classes'][] = $class;
-                $result['classes2'][$class['id']] = $class;
+                $result['classes'][$class['id']] = $class;
             }
 
             if ($result) {
@@ -89,17 +85,33 @@ class SCHOOL extends API
         return "Недостаточно прав пользователя";
     }
 
-    // data: user (dev | service | admin | student)
+    // data: class
     function STUDENT($data)
     {
         $data = json_decode(json_encode($data), true);
-        if ($data['class']) {
+        API::MySQL('school')->where('id', $data['class']);
+        $isClass = API::MySQL('school')->getOne('classes');
+        if ($isClass) {
+
+            // Предметы
             API::MySQL('school')->where('class', $data['class']);
-        }
-        if ($data['admin'] || $data['class']) {
-            $subjects = API::MySQL('school')->get('subjects');
-            if ($subjects) {
-                return $subjects;
+            $result['subjects'] = API::MySQL('school')->get('subjects');
+
+            // Классы
+            $classes = API::MySQL('school')->get('classes');
+            foreach ($classes as $class) {
+                $result['classes'][$class['id']] = $class;
+            }
+
+            // Учителя
+            API::MySQL('school')->where('type', 'teacher');
+            $teachers = API::MySQL('school')->get('users');
+            foreach ($teachers as $user) {
+                $result['teachers'][$user['id']] = $user;
+            }
+
+            if ($result) {
+                return $result;
             }
             http_response_code(404);
             return "Пустой результат";
@@ -176,6 +188,18 @@ class SCHOOL extends API
         return "Неверные аргументы";
     }
 
+    function LIVE($data)
+    {
+        $data = json_decode(json_encode($data), true);
+        API::MySQL('school')->where('id', $data['subject']);
+        $isSub = API::MySQL('school')->getOne('subjects');
+        if ($isSub) {
+            return $isSub;
+        }
+        http_response_code(403);
+        return "Недостаточно прав пользователя";
+    }
+
     // function MIGRATE($data)
     // {
     //     $enroll = API::MySQL('school1')->get('enroll');
@@ -218,22 +242,5 @@ class SCHOOL extends API
     //         return 'subjects error';
     //     }
     //     return true;
-    // }
-
-    // function NAVIGATION($data)
-    // {
-    //     if ($data->type) {
-    //         $data = json_decode(json_encode($data), true);
-    //         $db = 'school';
-
-    //         API::MySQL($db)->where("type", $data['type']);
-    //         $navigation = API::MySQL($db)->getOne("navigation");
-    //         if ($navigation) {
-    //             if ($data['type'] == $navigation['type']) {
-    //                 return json_decode($navigation['json']);
-    //             }
-    //         }
-    //         return false;
-    //     }
     // }
 }

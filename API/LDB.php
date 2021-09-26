@@ -123,13 +123,37 @@ class LDB extends API
         $data = json_decode(json_encode($data), true);
         $db = $data['service'];
         unset($data['service']);
-        $result = [
-            'first_name' => $data['user']['first_name'],
-            'last_name' => $data['user']['last_name'],
-            'username' => $data['user']['username'],
-            'type' => $data['user']['type'],
-            'email' => $data['user']['email']
-        ];
+
+        API::MySQL($db)->where('username', $data['user']['username']);
+        $inUname = API::MySQL($db)->getOne('users');
+        if ($inUname && $inUname['id'] != $data['user']['id']) {
+            http_response_code(401);
+            return "Такой логин уже существует";
+        }
+
+        API::MySQL($db)->where('email', $data['user']['email']);
+        $inEmail = API::MySQL($db)->getOne('users');
+        if ($inEmail && $inEmail['id'] != $data['user']['id']) {
+            http_response_code(401);
+            return "Такая почта уже существует";
+        }
+
+        if ($data['user']['first_name']) {
+            $result['first_name'] = $data['user']['first_name'];
+        }
+        if ($data['user']['last_name']) {
+            $result['last_name'] = $data['user']['last_name'];
+        }
+        if ($data['user']['username']) {
+            $result['username'] = $data['user']['username'];
+        }
+        if ($data['user']['type']) {
+            $result['type'] = $data['user']['type'];
+        }
+        if ($data['user']['email']) {
+            $result['email'] = $data['user']['email'];
+        }
+
         API::MySQL($db)->where('id', $data['user']['id']);
         if (API::MySQL($db)->update('users', $result)) {
             return true;
