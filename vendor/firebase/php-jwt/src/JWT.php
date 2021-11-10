@@ -81,30 +81,30 @@ class JWT
         $timestamp = \is_null(static::$timestamp) ? \time() : static::$timestamp;
 
         if (empty($key)) {
-            throw new InvalidArgumentException('Key may not be empty');
+            throw new InvalidArgumentException('Ключ не может быть пустым');
         }
         $tks = \explode('.', $jwt);
         if (\count($tks) != 3) {
-            throw new UnexpectedValueException('Wrong number of segments');
+            throw new UnexpectedValueException('Неправильное количество сегментов');
         }
         list($headb64, $bodyb64, $cryptob64) = $tks;
         if (null === ($header = static::jsonDecode(static::urlsafeB64Decode($headb64)))) {
-            throw new UnexpectedValueException('Invalid header encoding');
+            throw new UnexpectedValueException('Неверная кодировка заголовка');
         }
         if (null === $payload = static::jsonDecode(static::urlsafeB64Decode($bodyb64))) {
-            throw new UnexpectedValueException('Invalid claims encoding');
+            throw new UnexpectedValueException('Неверные требования кодирования');
         }
         if (false === ($sig = static::urlsafeB64Decode($cryptob64))) {
-            throw new UnexpectedValueException('Invalid signature encoding');
+            throw new UnexpectedValueException('Неверная кодировка подписи');
         }
         if (empty($header->alg)) {
-            throw new UnexpectedValueException('Empty algorithm');
+            throw new UnexpectedValueException('Пустой алгоритм');
         }
         if (empty(static::$supported_algs[$header->alg])) {
-            throw new UnexpectedValueException('Algorithm not supported');
+            throw new UnexpectedValueException('Алгоритм не поддерживается');
         }
         if (!\in_array($header->alg, $allowed_algs)) {
-            throw new UnexpectedValueException('Algorithm not allowed');
+            throw new UnexpectedValueException('Алгоритм не допускается');
         }
         if ($header->alg === 'ES256' || $header->alg === 'ES384') {
             // OpenSSL expects an ASN.1 DER sequence for ES256/ES384 signatures
@@ -114,24 +114,24 @@ class JWT
         if (\is_array($key) || $key instanceof \ArrayAccess) {
             if (isset($header->kid)) {
                 if (!isset($key[$header->kid])) {
-                    throw new UnexpectedValueException('"kid" invalid, unable to lookup correct key');
+                    throw new UnexpectedValueException('"kid" Неверный, не удается найти правильный ключ');
                 }
                 $key = $key[$header->kid];
             } else {
-                throw new UnexpectedValueException('"kid" empty, unable to lookup correct key');
+                throw new UnexpectedValueException('"kid" Пусто, не в состоянии найти правильный ключ');
             }
         }
 
         // Check the signature
         if (!static::verify("$headb64.$bodyb64", $sig, $key, $header->alg)) {
-            throw new SignatureInvalidException('Signature verification failed');
+            throw new SignatureInvalidException('Проверка подписи не удалась');
         }
 
         // Check the nbf if it is defined. This is the time that the
         // token can actually be used. If it's not yet that time, abort.
         if (isset($payload->nbf) && $payload->nbf > ($timestamp + static::$leeway)) {
             throw new BeforeValidException(
-                'Cannot handle token prior to ' . \date(DateTime::ISO8601, $payload->nbf)
+                'Не может обрабатывать токен до ' . \date(DateTime::ISO8601, $payload->nbf)
             );
         }
 
@@ -140,13 +140,13 @@ class JWT
         // correctly used the nbf claim).
         if (isset($payload->iat) && $payload->iat > ($timestamp + static::$leeway)) {
             throw new BeforeValidException(
-                'Cannot handle token prior to ' . \date(DateTime::ISO8601, $payload->iat)
+                'Не может обрабатывать токен до ' . \date(DateTime::ISO8601, $payload->iat)
             );
         }
 
         // Check if this token has expired.
         if (isset($payload->exp) && ($timestamp - static::$leeway) >= $payload->exp) {
-            throw new ExpiredException('Expired token');
+            throw new ExpiredException('Истекший токен');
         }
 
         return $payload;
@@ -205,7 +205,7 @@ class JWT
     public static function sign($msg, $key, $alg = 'HS256')
     {
         if (empty(static::$supported_algs[$alg])) {
-            throw new DomainException('Algorithm not supported');
+            throw new DomainException('Алгоритм не поддерживается');
         }
         list($function, $algorithm) = static::$supported_algs[$alg];
         switch ($function) {
@@ -215,7 +215,7 @@ class JWT
                 $signature = '';
                 $success = \openssl_sign($msg, $signature, $key, $algorithm);
                 if (!$success) {
-                    throw new DomainException("OpenSSL unable to sign data");
+                    throw new DomainException("OpenSSL не может подписать данные");
                 }
                 if ($alg === 'ES256') {
                     $signature = self::signatureFromDER($signature, 256);
@@ -254,7 +254,7 @@ class JWT
     private static function verify($msg, $signature, $key, $alg)
     {
         if (empty(static::$supported_algs[$alg])) {
-            throw new DomainException('Algorithm not supported');
+            throw new DomainException('Алгоритм не поддерживается');
         }
 
         list($function, $algorithm) = static::$supported_algs[$alg];
@@ -330,7 +330,7 @@ class JWT
         if ($errno = \json_last_error()) {
             static::handleJsonError($errno);
         } elseif ($obj === null && $input !== 'null') {
-            throw new DomainException('Null result with non-null input');
+            throw new DomainException('Нулевой результат с ненулевым входом');
         }
         return $obj;
     }
@@ -350,7 +350,7 @@ class JWT
         if ($errno = \json_last_error()) {
             static::handleJsonError($errno);
         } elseif ($json === 'null' && $input !== null) {
-            throw new DomainException('Null result with non-null input');
+            throw new DomainException('Нулевой результат с ненулевым входом');
         }
         return $json;
     }
