@@ -1,2 +1,12 @@
+#////////////////////////////////////////////////////////////////////////////////
+#/**
+# * @author Ivan Zorin <creator@localzet.ru>
+# * @license GNU General Public License v3.0
+# * @copyright Zorin Projects <www.localzet.ru>
+# */
+#////////////////////////////////////////////////////////////////////////////////
+
+
+
 # Auto detect text files and perform LF normalization
 * text=auto
