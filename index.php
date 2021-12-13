@@ -91,6 +91,8 @@ if ($_SERVER['SERVER_PORT'] != 80 || $_SERVER['SERVER_PORT'] != 443) {
 // /v3?api=Class:Func&param=Param
 define('COMMAND_URL', str_replace(APP_WEB_ROOT, '', REQUEST_URL));
 
+require_once APP_ROOT . '/API.php';
+
 // [0] => '/v3'
 // [1] => 'api=Class:Func&param=Param'
 $commandSplit = explode('?', COMMAND_URL);
@@ -120,6 +122,7 @@ $fileType = API::getFileType($RESOURCE_PATH);
 
 if (is_file($RESOURCE_PATH)) {
     if ($fileType == 'php') {
+        echo "Вывод1";
         // /var/www/fastuser/data/www/api.localzet.ru/v3.php
         include $RESOURCE_PATH;
     } else {
@@ -158,7 +161,6 @@ $RESOURCE_PATH .= ".php";
 if (!is_file($RESOURCE_PATH)) {
     API::Response(API::Error("Запрашиваемый ресурс не найден", 404));
 }
-
 require_once $RESOURCE_PATH;
 
 exit();

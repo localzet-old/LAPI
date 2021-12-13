@@ -13,6 +13,7 @@ error_reporting(E_ALL ^ E_NOTICE ^ E_DEPRECATED ^ E_WARNING ^ E_ERROR ^ E_STRICT
 define('APP_ROOT', str_replace('\\', '/', getcwd()));
 define('APP_TEMP_ROOT', APP_ROOT . '/temp');
 
+require_once APP_ROOT . '/API.php';
 require_once APP_ROOT . '/LWS.php';
 
 // LOAD CONFIG FILE

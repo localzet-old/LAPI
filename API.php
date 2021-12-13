@@ -11,14 +11,12 @@ use Firebase\JWT\JWT;
 
 abstract class API
 {
-	static private $CONFIG;
 	static private $MySQL;
 	static private $RTDB;
 	static private string $JWTKEY = "31EFD9A378593B2A6E177615FB75A";
 
-	public static function setConfig()
+	public function __construct()
 	{
-		self::$CONFIG = parse_ini_file(APP_ROOT . "/config.ini", true);
 	}
 
 	public static function DB($db, $server = 'MySQL')
@@ -32,8 +30,8 @@ abstract class API
 				if (!self::$MySQL[$db]) {
 					$connection = array(
 						'host' => 'localhost',
-						'username' => self::$CONFIG['database']['user'],
-						'password' => self::$CONFIG['database']['pass'],
+						'username' => 'localzet',
+						'password' => 'lvanZ2003',
 						'db' => $db,
 						'port' => 3306,
 						'prefix' => '',
@@ -122,7 +120,7 @@ abstract class API
 	public static function Response($data, $connect = null)
 	{
 		try {
-			if ($connect == null) {
+			if ($connect != null) {
 				socket_write($connect, API::WSencode($data));
 			} else {
 				echo $data;

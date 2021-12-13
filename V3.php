@@ -7,8 +7,6 @@
  */
 ////////////////////////////////////////////////////////////////////////////////
 
-require_once APP_ROOT . "/API.php";
-API::setConfig();
 
 // Определение типа вывода
 $OUTPUT_CONTENT_TYPE = "application/json";

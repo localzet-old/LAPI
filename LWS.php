@@ -7,7 +7,6 @@
  */
 ////////////////////////////////////////////////////////////////////////////////
 
-require_once APP_ROOT . '/API.php';
 require_once APP_ROOT . '/WSAPI.php';
 
 /**
@@ -40,6 +39,7 @@ class LWS
      * Для хранения всех подключений, принятых слушающим сокетом
      */
     private $connects;
+
     /**
      * Ограничение по времени работы сервера
      */
@@ -48,6 +48,10 @@ class LWS
      * Время начала работы сервера
      */
     private $startTime;
+    /**
+     * Выводить сообщения в консоль?
+     */
+    private $verbose = true;
     /**
      * Записывать сообщения в log-файл?
      */
@@ -67,7 +71,9 @@ class LWS
         $this->ip = $config['listen_ip'];
         $this->port = $config['listen_port'];
         $this->config = $config;
-        API::setConfig();
+
+        $this->handler = function ($connection, $data) {
+        };
     }
 
     public function __destruct()

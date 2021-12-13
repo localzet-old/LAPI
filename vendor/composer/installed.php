@@ -5,7 +5,7 @@
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '4eb2b356dbb91df26d9ea0f6bc69f0a15ce149ba',
+        'reference' => 'e3be923c8d644d9bb14267d2642be28563c6bbf9',
         'name' => '__root__',
         'dev' => true,
     ),
@@ -16,7 +16,7 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '4eb2b356dbb91df26d9ea0f6bc69f0a15ce149ba',
+            'reference' => 'e3be923c8d644d9bb14267d2642be28563c6bbf9',
             'dev_requirement' => false,
         ),
         'pear/http_request2' => array(
